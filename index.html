@@ -3,201 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <title>Tinkering with HTML 5 support</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <link href="http://vjs.zencdn.net/5.4.6/video-js.css" rel="stylesheet">
+  <script src="http://vjs.zencdn.net/ie8/1.1.1/videojs-ie8.min.js"></script>
+  <style>
+    #instructions { max-width: 640px; text-align: left; margin: 30px auto; }
+    #instructions textarea { width: 100%; height: 100px; }
+    
+    /* Show the controls (hidden at the start by default) */
+    .video-js .vjs-control-bar { 
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+    }
+
+    /* Make the demo a little prettier */
+    body {
+      margin-top: 20px;
+      background: #222;
+      text-align: center; 
+      color: #aaa;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: radial-gradient(#333, hsl(200,30%,6%) );
+    }
+
+    a, a:hover, a:visited { color: #76DAFF; }
+
+    /*
+    Player Skin Designer for Video.js
+    http://videojs.com
+
+    To customize the player skin edit 
+    the CSS below. Click "details" 
+    below to add comments or questions.
+    This file uses some SCSS. Learn more  
+    at http://sass-lang.com/guide)
+
+    This designer can be linked to at:
+    http://codepen.io/heff/pen/EarCt/left/?editors=010
+    */
+    .video-js {
+      /* The base font size controls the size of everything, not just text.
+         All dimensions use em-based sizes so that the scale along with the font size.
+         Try increasing it to 15px and see what happens. */
+      font-size: 10px;
+      /* The main font color changes the ICON COLORS as well as the text */
+      color: #fff;
+    }
+
+    /* The "Big Play Button" is the play button that shows before the video plays.
+       To center it set the align values to center and middle. The typical location
+       of the button is the center, but there is trend towards moving it to a corner
+       where it gets out of the way of valuable content in the poster image.*/
+    .vjs-default-skin .vjs-big-play-button {
+      /* The font size is what makes the big play button...big. 
+         All width/height values use ems, which are a multiple of the font size.
+         If the .video-js font-size is 10px, then 3em equals 30px.*/
+      font-size: 3em;
+      /* We're using SCSS vars here because the values are used in multiple places.
+         Now that font size is set, the following em values will be a multiple of the
+         new font size. If the font-size is 3em (30px), then setting any of
+         the following values to 3em would equal 30px. 3 * font-size. */
+      /* 1.5em = 45px default */
+      line-height: 1.5em;
+      height: 1.5em;
+      width: 3em;
+      /* 0.06666em = 2px default */
+      border: 0.06666em solid #fff;
+      /* 0.3em = 9px default */
+      border-radius: 0.3em;
+      /* Align top left. 0.5em = 15px default */
+      left: 0.5em;
+      top: 0.5em;
+    }
+
+    /* The default color of control backgrounds is mostly black but with a little
+       bit of blue so it can still be seen on all-black video frames, which are common. */
+    .video-js .vjs-control-bar,
+    .video-js .vjs-big-play-button,
+    .video-js .vjs-menu-button .vjs-menu-content {
+      /* IE8 - has no alpha support */
+      background-color: #009688;
+      /* Opacity: 1.0 = 100%, 0.0 = 0% */
+      background-color: rgba(0,150,136, 0.7);
+    }
+
+    /* Slider - used for Volume bar and Progress bar */
+    .video-js .vjs-slider {
+      background-color: #73859f;
+      background-color: rgba(115, 133, 159, 0.5);
+    }
+
+    /* The slider bar color is used for the progress bar and the volume bar
+       (the first two can be removed after a fix that's coming) */
+    .video-js .vjs-volume-level,
+    .video-js .vjs-play-progress,
+    .video-js .vjs-slider-bar {
+      background: #fff;
+    }
+
+    /* The main progress bar also has a bar that shows how much has been loaded. */
+    .video-js .vjs-load-progress {
+      /* For IE8 we'll lighten the color */
+      background: ligthen(#73859f, 25%);
+      /* Otherwise we'll rely on stacked opacities */
+      background: rgba(128,203,196, 0.5);
+    }
+
+    /* The load progress bar also has internal divs that represent
+       smaller disconnected loaded time ranges */
+    .video-js .vjs-load-progress div {
+      /* For IE8 we'll lighten the color */
+      background: ligthen(#73859f, 50%);
+      /* Otherwise we'll rely on stacked opacities */
+      background: rgba(128,203,196, 0.75);
+    }
+  </style>
 </head>
 <body>
 
-<video id="demovideo" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" preload="auto" controls></video>
+  <video id="demovideo" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" preload="auto" controls></video>
 
-<div>
-    <button onclick="document.getElementById('demovideo').play()">Reproducir video</button>
-    <button onclick="document.getElementById('demovideo').pause()">Pausar el video</button>
-    <button onclick="document.getElementById('demovideo').volume+=0.1">Aumentar el Volumen</button>
-    <button onclick="document.getElementById('demovideo').volume-=0.1">Disminuir el Volumen</button>
-</div>
+  <div>
+      <button onclick="document.getElementById('demovideo').play()">Reproducir video</button>
+      <button onclick="document.getElementById('demovideo').pause()">Pausar el video</button>
+      <button onclick="document.getElementById('demovideo').volume+=0.1">Aumentar el Volumen</button>
+      <button onclick="document.getElementById('demovideo').volume-=0.1">Disminuir el Volumen</button>
+  </div>
 
-<div class="test">Back in black:</div>
+  <div class="test">Back in black:</div>
 
-<audio id="demo" src="https://upload.wikimedia.org/wikipedia/en/4/45/ACDC_-_Back_In_Black-sample.ogg" preload="auto" controls></audio>
+  <audio id="demo" src="https://upload.wikimedia.org/wikipedia/en/4/45/ACDC_-_Back_In_Black-sample.ogg" preload="auto" controls></audio>
 
-<div>
-    <button onclick="document.getElementById('demo').play()">Reproducir el Audio</button>
-    <button onclick="document.getElementById('demo').pause()">Pausar el Audio</button>
-    <button onclick="document.getElementById('demo').volume+=0.1">Aumentar el Volumen</button>
-    <button onclick="document.getElementById('demo').volume-=0.1">Disminuir el Volumen</button>
-</div>
-
-
-
-<div class="test">Audio Another day in paradise:</div>
-
-<audio id="demo2" src="https://upload.wikimedia.org/wikipedia/en/9/9f/Sample_of_%22Another_Day_in_Paradise%22.ogg" preload="auto" controls></audio>
-
-<div>
-    <button onclick="document.getElementById('demo2').play()">Reproducir el Audio</button>
-    <button onclick="document.getElementById('demo2').pause()">Pausar el Audio</button>
-    <button onclick="document.getElementById('demo2').volume+=0.1">Aumentar el Volumen</button>
-    <button onclick="document.getElementById('demo2').volume-=0.1">Disminuir el Volumen</button>
-</div>
-
-<div class="test">Audio Bullet in the head:</div>
-
-<audio id="demo3" src="https://upload.wikimedia.org/wikipedia/en/1/17/Bullet_In_The_Head.ogg" preload="auto" controls></audio>
+  <div>
+      <button onclick="document.getElementById('demo').play()">Reproducir el Audio</button>
+      <button onclick="document.getElementById('demo').pause()">Pausar el Audio</button>
+      <button onclick="document.getElementById('demo').volume+=0.1">Aumentar el Volumen</button>
+      <button onclick="document.getElementById('demo').volume-=0.1">Disminuir el Volumen</button>
+  </div>
 
 
-<div>
-    <button onclick="document.getElementById('demo3').play()">Reproducir el Audio</button>
-    <button onclick="document.getElementById('demo3').pause()">Pausar el Audio</button>
-    <button onclick="document.getElementById('demo3').volume+=0.1">Aumentar el Volumen</button>
-    <button onclick="document.getElementById('demo3').volume-=0.1">Disminuir el Volumen</button>
-</div>
 
-<a href="https://developer.mozilla.org/es/docs/Web/HTML/Usando_audio_y_video_con_HTML5">Més info</a>
+  <div class="test">Audio Another day in paradise:</div>
+
+  <audio id="demo2" src="https://upload.wikimedia.org/wikipedia/en/9/9f/Sample_of_%22Another_Day_in_Paradise%22.ogg" preload="auto" controls></audio>
+
+  <div>
+      <button onclick="document.getElementById('demo2').play()">Reproducir el Audio</button>
+      <button onclick="document.getElementById('demo2').pause()">Pausar el Audio</button>
+      <button onclick="document.getElementById('demo2').volume+=0.1">Aumentar el Volumen</button>
+      <button onclick="document.getElementById('demo2').volume-=0.1">Disminuir el Volumen</button>
+  </div>
+
+  <div class="test">Audio Bullet in the head:</div>
+
+  <audio id="demo3" src="https://upload.wikimedia.org/wikipedia/en/1/17/Bullet_In_The_Head.ogg" preload="auto" controls></audio>
+
+
+  <div>
+      <button onclick="document.getElementById('demo3').play()">Reproducir el Audio</button>
+      <button onclick="document.getElementById('demo3').pause()">Pausar el Audio</button>
+      <button onclick="document.getElementById('demo3').volume+=0.1">Aumentar el Volumen</button>
+      <button onclick="document.getElementById('demo3').volume-=0.1">Disminuir el Volumen</button>
+  </div>
+
 <div id="instructions">
 
   <video id="my_video_1" class="video-js vjs-default-skin" width="640px" height="267px"
-      controls preload="none" poster='http://video-js.zencoder.com/oceans-clip.jpg'
+      controls preload="none" 
       data-setup='{ "aspectRatio":"640:267", "playbackRates": [1, 1.5, 2] }'>
     <source src="http://vjs.zencdn.net/v/oceans.mp4" type='video/mp4' />
     <source src="http://vjs.zencdn.net/v/oceans.webm" type='video/webm' />
   </video>
-
-
-
 </div>
-  
-<style>
-  #instructions { max-width: 640px; text-align: left; margin: 30px auto; }
-  #instructions textarea { width: 100%; height: 100px; }
-  
-  /* Show the controls (hidden at the start by default) */
-  .video-js .vjs-control-bar { 
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-  }
 
-  /* Make the demo a little prettier */
-  body {
-    margin-top: 20px;
-    background: #222;
-    text-align: center; 
-    color: #aaa;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: radial-gradient(#333, hsl(200,30%,6%) );
-  }
+  <div id="gamepadPrompt"></div>
+  <div id="gamepadDisplay"></div>
+    
 
-  a, a:hover, a:visited { color: #76DAFF; }
+  <script>
+  	$(function(){
+    var $refreshButton = $('#refresh');
+    var $results = $('#css_result');
+    
+    function refresh(){
+      var css = $('style.cp-pen-styles').text();
+      $results.html(css);
+    }
 
-  /*
-  Player Skin Designer for Video.js
-  http://videojs.com
-
-  To customize the player skin edit 
-  the CSS below. Click "details" 
-  below to add comments or questions.
-  This file uses some SCSS. Learn more  
-  at http://sass-lang.com/guide)
-
-  This designer can be linked to at:
-  http://codepen.io/heff/pen/EarCt/left/?editors=010
-*/
-.video-js {
-  /* The base font size controls the size of everything, not just text.
-     All dimensions use em-based sizes so that the scale along with the font size.
-     Try increasing it to 15px and see what happens. */
-  font-size: 10px;
-  /* The main font color changes the ICON COLORS as well as the text */
-  color: #fff;
-}
-
-/* The "Big Play Button" is the play button that shows before the video plays.
-   To center it set the align values to center and middle. The typical location
-   of the button is the center, but there is trend towards moving it to a corner
-   where it gets out of the way of valuable content in the poster image.*/
-.vjs-default-skin .vjs-big-play-button {
-  /* The font size is what makes the big play button...big. 
-     All width/height values use ems, which are a multiple of the font size.
-     If the .video-js font-size is 10px, then 3em equals 30px.*/
-  font-size: 3em;
-  /* We're using SCSS vars here because the values are used in multiple places.
-     Now that font size is set, the following em values will be a multiple of the
-     new font size. If the font-size is 3em (30px), then setting any of
-     the following values to 3em would equal 30px. 3 * font-size. */
-  /* 1.5em = 45px default */
-  line-height: 1.5em;
-  height: 1.5em;
-  width: 3em;
-  /* 0.06666em = 2px default */
-  border: 0.06666em solid #fff;
-  /* 0.3em = 9px default */
-  border-radius: 0.3em;
-  /* Align top left. 0.5em = 15px default */
-  left: 0.5em;
-  top: 0.5em;
-}
-
-/* The default color of control backgrounds is mostly black but with a little
-   bit of blue so it can still be seen on all-black video frames, which are common. */
-.video-js .vjs-control-bar,
-.video-js .vjs-big-play-button,
-.video-js .vjs-menu-button .vjs-menu-content {
-  /* IE8 - has no alpha support */
-  background-color: #2B333F;
-  /* Opacity: 1.0 = 100%, 0.0 = 0% */
-  background-color: rgba(43, 51, 63, 0.7);
-}
-
-/* Slider - used for Volume bar and Progress bar */
-.video-js .vjs-slider {
-  background-color: #73859f;
-  background-color: rgba(115, 133, 159, 0.5);
-}
-
-/* The slider bar color is used for the progress bar and the volume bar
-   (the first two can be removed after a fix that's coming) */
-.video-js .vjs-volume-level,
-.video-js .vjs-play-progress,
-.video-js .vjs-slider-bar {
-  background: #fff;
-}
-
-/* The main progress bar also has a bar that shows how much has been loaded. */
-.video-js .vjs-load-progress {
-  /* For IE8 we'll lighten the color */
-  background: ligthen(#73859f, 25%);
-  /* Otherwise we'll rely on stacked opacities */
-  background: rgba(115, 133, 159, 0.5);
-}
-
-/* The load progress bar also has internal divs that represent
-   smaller disconnected loaded time ranges */
-.video-js .vjs-load-progress div {
-  /* For IE8 we'll lighten the color */
-  background: ligthen(#73859f, 50%);
-  /* Otherwise we'll rely on stacked opacities */
-  background: rgba(115, 133, 159, 0.75);
-}
-</style>
-<script type="text/javascript">
-	$(function(){
-  var $refreshButton = $('#refresh');
-  var $results = $('#css_result');
-  
-  function refresh(){
-    var css = $('style.cp-pen-styles').text();
-    $results.html(css);
-  }
-
-  refresh();
-  $refreshButton.click(refresh);
-  
-  // Select all the contents when clicked
-  $results.click(function(){
-    $(this).select();
+    refresh();
+    $refreshButton.click(refresh);
+    
+    // Select all the contents when clicked
+    $results.click(function(){
+      $(this).select();
+    });
   });
-});
+  </script>
+    <script>
+      var hasGP = false;
+      var repGP;
 
-</script>
+      function canGame() {
+          return "getGamepads" in navigator;
+      }
+      
+      function reportOnGamepad() {
+          var gp = navigator.getGamepads()[0];
+          var html = "";
+              html += "id: "+gp.id+"<br/>";
+   
+          for(var i=0;i<gp.buttons.length;i++) {
+              html+= "Button "+(i+1)+": ";
+              if(gp.buttons[i].pressed) html+= " pressed";
+              html+= "<br/>";
+                  if (gp.buttons[0].pressed==true) {
+                  document.getElementById('demovideo').play()
+                };
+                if (gp.buttons[1].pressed==true) {
+                  document.getElementById('demovideo').pause()
+                };
+                if (gp.buttons[5].pressed==true) {
+                  document.getElementById('demovideo').volume+=0.005
+                };
+                if (gp.buttons[4].pressed==true) {
+                  document.getElementById('demovideo').volume-=0.005
+                };
+                if (gp.buttons[6].pressed==true) {
+                  document.getElementById('demovideo').play(document.getElementById('demovideo').currentTime-=0.02)
+                };
+                if (gp.buttons[7].pressed==true) {
+                  document.getElementById('demovideo').play(document.getElementById('demovideo').currentTime+=0.02)
+                };              
+          }
+           
+          for(var i=0;i<gp.axes.length; i+=2) {
+              html+= "Stick "+(Math.ceil(i/2)+1)+": "+gp.axes[i]+","+gp.axes[i+1]+"<br/>";
+          }
+   
+          $("#gamepadDisplay").html(html);
+      }
+   
+      $(document).ready(function() {
+   
+          if(canGame()) {
+   
+              var prompt = "To begin using your gamepad, connect it and press any button!";
+              $("#gamepadPrompt").text(prompt);
+   
+              $(window).on("gamepadconnected", function() {
+                  hasGP = true;
+                  $("#gamepadPrompt").html("Gamepad connected!");
+                  console.log("connection event");
+                  repGP = window.setInterval(reportOnGamepad,100);
+              });
+   
+              $(window).on("gamepaddisconnected", function() {
+                  console.log("disconnection event");
+                  $("#gamepadPrompt").text(prompt);
+                  window.clearInterval(repGP);
+              });
+   
+              //setup an interval for Chrome
+              var checkGP = window.setInterval(function() {
+                  console.log('checkGP');
+                  if(navigator.getGamepads()[0]) {
+                      if(!hasGP) $(window).trigger("gamepadconnected");
+                      window.clearInterval(checkGP);
+                  }
+              }, 500);
+          }
+   
+      });
+    </script>
+    <script src="http://vjs.zencdn.net/5.4.6/video.js"></script>
 </body>
 </html>
